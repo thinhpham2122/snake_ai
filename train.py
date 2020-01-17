@@ -81,7 +81,7 @@ def train():
             move += 1
             if result == 'invalid' or move > 1000:
                 end = True
-        if game_n % 10000 == 0:
+        if game_n % 3000 == 0:
             ai.exp_replay()
             test(ai.model)
             ai.model.save(f'model/{name}_{game_n}')
