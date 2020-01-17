@@ -6,6 +6,7 @@ from tensorflow.keras.optimizers import Adam
 import numpy as np
 import random
 from collections import deque
+from math import floor
 
 
 class Agent:
@@ -48,8 +49,21 @@ class Agent:
         if self.epsilon > self.epsilon_min:
             self.epsilon *= self.epsilon_decay
             if random.random() <= self.epsilon:
-                
-                return random.randrange(self.action_size)
+                possible_action = []
+                current_loc = None
+                body = []
+                for e, i in enumerate(state[0]):
+                    if i == -1:
+                        current_loc = e
+                    elif i != 0 and i != 1:
+                        body.append(e)
+                row = floor(current_loc / 7)
+                for action, location in enumerate([current_loc - 7, current_loc - 1, current_loc + 7, current_loc + 1]):
+                    diff = abs(location - current_loc)
+                    if not ((location == (row * 7) - 1 and diff != 7) or (location == (row + 1) * 7 and diff != 7)
+                            or location < 0 or location > 48 or location in body):
+                        possible_action.append(action)
+                return random.choice(possible_action)
         output = self.model.predict(state)
         return np.argmax(output)
 
