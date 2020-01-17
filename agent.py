@@ -63,7 +63,8 @@ class Agent:
                     if not ((location == (row * 7) - 1 and diff != 7) or (location == (row + 1) * 7 and diff != 7)
                             or location < 0 or location > 48 or location in body):
                         possible_action.append(action)
-                return random.choice(possible_action)
+                return random.choice(possible_action) if len(possible_action) != 0 else random.randrange(self.action_size)
+
         output = self.model.predict(state)
         return np.argmax(output)
 
