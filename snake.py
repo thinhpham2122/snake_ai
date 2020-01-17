@@ -52,9 +52,9 @@ class snake:
     def print_board(self):
         board = ['. '] * 49
         for e, i in enumerate(self.location_history):
-            diff = abs(self.location_history[e] - self.location_history[e-1])
-            board[i] = 'I ' if diff == 1 else 'H '
-        board[self.location_history[-1]] = 'O '
+            prev = self.location_history[e] - self.location_history[e-1] if e != 0 else 0
+            next = self.location_history[e] - self.location_history[e+1] if e != len(self.location_history) - 1 else 0
+            board[i] = 'oo' if next == -1 or prev == -1 else 'o '
         board[self.food_location] = 'X '
         for row in np.split(np.array(board), 7):
             board_row = ''
