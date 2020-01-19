@@ -13,7 +13,7 @@ def get_state(location_history, food_location):
     return np.array([state])
 
 
-name = 'b_140000'
+name = 'd_123000'
 game = snake.snake()
 ai = load_model(f'model/{name}')
 end = False
@@ -27,4 +27,4 @@ while not end:
     game.print_board()
     if result == 'invalid':
         end = True
-    sleep(.3)
+    sleep(.1)

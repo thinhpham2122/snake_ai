@@ -49,16 +49,20 @@ def test(model):
     end = False
     move = 0
     while not end:
+        current_food = game_test.food_location
         state = get_state(game_test.location_history, game_test.food_location)
         prediction = model.predict(state)[0]
         action = np.argmax(prediction)
         result = game_test.play(action)
         print(f'     {int(prediction[0]*1000)}')
-        print(f'{int(prediction[1]*1000)}     {int(prediction[3]*1000)}')
+        print(f'{int(prediction[1]*1000)}  {move} {int(prediction[3]*1000)}')
         print(f'     {int(prediction[2]*1000)}')
         game_test.print_board()
-        move += 1
-        if result == 'invalid' or move > 1000:
+        if current_food != game_test.food_location:
+            move = 0
+        else:
+            move += 1
+        if result == 'invalid' or move > 50:
             end = True
 
 
@@ -68,18 +72,22 @@ def train():
     while True:
         game = snake.snake()
         end = False
-        game_n += 1
         move = 0
+        game_n += 1
         print(game_n, len(ai.memory), end='\r')
         while not end:
             current_history = game.location_history[:]
             current_food = game.food_location
+
             state = get_state(current_history, current_food)
             action = ai.act(state)
             result = game.play(action)
             ai.memory.append(get_event(current_history, current_food))
-            move += 1
-            if result == 'invalid' or move > 1000:
+            if current_food != game.food_location:
+                move = 0
+            else:
+                move += 1
+            if result == 'invalid' or move > 50:
                 end = True
         if game_n % 3000 == 0:
             ai.exp_replay()
@@ -87,5 +95,5 @@ def train():
             ai.model.save(f'model/{name}_{game_n}')
 
 
-name = 'b'
+name = 'd'
 train()

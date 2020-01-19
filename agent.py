@@ -16,7 +16,7 @@ class Agent:
         self.memory = []
         self.model_name = model_name
         self.gamma = 0.95
-        self.data = 5_000_000
+        self.data = 10_000_000
         self.epsilon = .70
         self.epsilon_min = .1
         self.epsilon_decay = float(np.e)**float(np.log(self.epsilon_min/self.epsilon)/self.data)
@@ -24,7 +24,7 @@ class Agent:
         if model_name:
             try:
                 print('loading model')
-                self.model = load_model(f'keras_model/{model_name}')
+                self.model = load_model(f'model/{model_name}')
             except:
                 print('fail to load model, creating new model')
                 self.model = self.model()
@@ -34,13 +34,9 @@ class Agent:
 
     def model(self):
         model = Sequential()
-        model.add(Dense(units=512, input_dim=self.state_size, activation="relu"))
-        model.add(Dense(units=512, activation="relu"))
-        model.add(Dense(units=512, activation="relu"))
-        model.add(Dense(units=512, activation="relu"))
-        model.add(Dense(units=256, activation="relu"))
-        model.add(Dense(units=256, activation="relu"))
-        model.add(Dense(units=128, activation="relu"))
+        model.add(Dense(units=4096, input_dim=self.state_size, activation="relu"))
+        model.add(Dense(units=4096, activation="relu"))
+        model.add(Dense(units=4096, activation="relu"))
         model.add(Dense(self.action_size, activation="linear"))
         model.compile(loss="mse", optimizer=Adam(lr=0.001))
         return model
@@ -101,4 +97,4 @@ class Agent:
         #         print(f'{round(a[(i * 7) + 0], 3)}    {round(a[(i * 7) + 1], 3)}    {round(a[(i * 7) + 2], 3)}    '
         #               f'{round(a[(i * 7) + 3], 3)}    {round(a[(i * 7) + 4], 3)}    {round(a[(i * 7) + 5], 3)}    '
         #               f'{round(a[(i * 7) + 6], 3)}    ')
-        self.model.fit([states], [target_fs], epochs=1, verbose=1, batch_size=2024)
+        self.model.fit([states], [target_fs], epochs=1, verbose=1, batch_size=256)
