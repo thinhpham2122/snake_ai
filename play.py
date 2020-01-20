@@ -13,7 +13,7 @@ def get_state(location_history, food_location):
     return np.array([state])
 
 
-name = 'd_123000'
+name = 'AI_model'
 game = snake.snake()
 ai = load_model(f'model/{name}')
 end = False
