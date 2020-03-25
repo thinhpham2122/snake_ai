@@ -4,18 +4,25 @@ import numpy as np
 
 
 def get_state(location_history, food_location):
-    state = [0] * 49
+    state = [([0] * 3) for i in range(49)]
+    state[location_history[-1]][0] = 1  # location of head
+    for location in location_history[0:-1]:
+        state[location][1] = 1  # location of body
+    state[food_location][2] = 1
+    state = np.array(state).flatten()
+
+    board = [0] * 49
     length = len(location_history)
     for n, i in enumerate(location_history):
-        state[i] = ((length / 100) - 1) - ((n + 1) / 100)
-    state[food_location] = 1
-    return np.array([state])
+        board[i] = ((length / 100) - 1) - ((n + 1) / 100)
+    board[food_location] = 1
+    return np.array([state]), np.array([board])
 
 
 def get_event(location_history, food_location):
     possible_actions = 4
     events = []
-    state = get_state(location_history, food_location)
+    state, _ = get_state(location_history, food_location)
     game_e = snake.snake()
     for action in range(possible_actions):
         game_e.location_history = location_history[:]
@@ -27,7 +34,7 @@ def get_event(location_history, food_location):
             done = True
             events.append([None, action, reward, None, done])
         else:
-            next_state = get_state(game_e.location_history, game_e.food_location)
+            next_state, _ = get_state(game_e.location_history, game_e.food_location)
             done = False
             events.append([None, action, reward, next_state[:], done])
 
@@ -50,7 +57,7 @@ def test(model):
     move = 0
     while not end:
         current_food = game_test.food_location
-        state = get_state(game_test.location_history, game_test.food_location)
+        state, _ = get_state(game_test.location_history, game_test.food_location)
         prediction = model.predict(state)[0]
         action = np.argmax(prediction)
         result = game_test.play(action)
@@ -67,7 +74,7 @@ def test(model):
 
 
 def train():
-    ai = agent.Agent(49, 4, model_name=name)
+    ai = agent.Agent(147, 4, model_name=name)
     game_n = 0
     while True:
         game = snake.snake()
@@ -78,9 +85,8 @@ def train():
         while not end:
             current_history = game.location_history[:]
             current_food = game.food_location
-
-            state = get_state(current_history, current_food)
-            action = ai.act(state)
+            state, board = get_state(current_history, current_food)
+            action = ai.act(state, board)
             result = game.play(action)
             ai.memory.append(get_event(current_history, current_food))
             if current_food != game.food_location:

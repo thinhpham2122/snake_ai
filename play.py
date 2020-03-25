@@ -5,11 +5,12 @@ from time import sleep
 
 
 def get_state(location_history, food_location):
-    state = [0] * 49
-    length = len(location_history)
-    for n, i in enumerate(location_history):
-        state[i] = ((length / 100) - 1) - ((n + 1) / 100)
-    state[food_location] = 1
+    state = [([0] * 3) for i in range(49)]
+    state[location_history[-1]][0] = 1  # location of head
+    for location in location_history[0:-1]:
+        state[location][1] = 1  # location of body
+    state[food_location][2] = 1
+    state = np.array(state).flatten()
     return np.array([state])
 
 

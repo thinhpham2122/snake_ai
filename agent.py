@@ -34,21 +34,21 @@ class Agent:
 
     def model(self):
         model = Sequential()
-        model.add(Dense(units=4096, input_dim=self.state_size, activation="relu"))
-        model.add(Dense(units=4096, activation="relu"))
-        model.add(Dense(units=4096, activation="relu"))
+        model.add(Dense(units=512, input_dim=self.state_size, activation="relu"))
+        model.add(Dense(units=512, activation="relu"))
+        model.add(Dense(units=512, activation="relu"))
         model.add(Dense(self.action_size, activation="linear"))
         model.compile(loss="mse", optimizer=Adam(lr=0.001))
         return model
 
-    def act(self, state):
+    def act(self, state, board):
         if self.epsilon > self.epsilon_min:
             self.epsilon *= self.epsilon_decay
             if random.random() <= self.epsilon:
                 possible_action = []
                 current_loc = None
                 body = []
-                for e, i in enumerate(state[0]):
+                for e, i in enumerate(board[0]):
                     if i == -1:
                         current_loc = e
                     elif i != 0 and i != 1:
